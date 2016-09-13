@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function myCopy() {
+	INPUT=$1
+	OUTPUT=$2
+	COMMAND=`command -v pv`
+	if  [ "$?" == "1" ]
+	then
+		cp $INPUT $OUTPUT
+	else
+		if [ -d "$OUTPUT" ]
+		then
+			FILE=`basename $1`
+			OUTPUT="$OUTPUT/$FILE"
+		fi
+
+		SIZE=`du -sb $INPUT | awk '{print $1}'`
+		pv $INPUT -s $SIZE | dd of=$OUTPUT
+	fi
+}
+
+myCopy $1 $2
